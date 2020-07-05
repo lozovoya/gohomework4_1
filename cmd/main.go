@@ -3,23 +3,24 @@ package main
 import (
 	"fmt"
 	"github.com/lozovoya/gohomework4_1/pkg/card"
+	"github.com/lozovoya/gohomework4_1/pkg/transfer"
 )
 
 func main() {
 
-	banks := make([]card.Service, 0, 5)
-	banks = append(banks, *card.NewService("Penguin Bank"))
-	banks = append(banks, *card.NewService("Zebra Bank"))
-	banks = append(banks, *card.NewService("Cucumber Bank"))
+	png := *card.NewService("Penguin Bank")
+	png.IssueCard("master", 100_000_00, "0000 0000 0000 0000", "rub")
+	png.IssueCard("visa", 100_000_00, "1111 1111 1111 1111", "rub")
+	png.IssueCard("master", 10_000_00, "2222 2222 2222 2222", "rub")
+	png.IssueCard("visa", 15_000_00, "3333 3333 3333 3333", "rub")
+	png.IssueCard("master", 50_000_00, "4444 4444 4444 4444", "rub")
+	png.IssueCard("visa", 60_000_00, "5555 5555 5555 5555", "rub")
 
-	banks[0].IssueCard("master", 100_000_00, "0000 0000 0000 0000", "rub")
-	banks[0].IssueCard("visa", 100_000_00, "1111 1111 1111 1111", "rub")
+	pngTr := *transfer.NewService(&png,
+		0, 0,
+		5, 10_00,
+		0, 0,
+		15, 30_00)
 
-	banks[1].IssueCard("master", 10_000_00, "2222 2222 2222 2222", "rub")
-	banks[1].IssueCard("visa", 15_000_00, "3333 3333 3333 3333", "rub")
-
-	banks[2].IssueCard("master", 50_000_00, "4444 4444 4444 4444", "rub")
-	banks[2].IssueCard("visa", 60_000_00, "5555 5555 5555 5555", "rub")
-
-	fmt.Println(banks[2].Cards[1])
+	fmt.Println(pngTr.Card2Card("1111 1111 1111 1111", "000 0000 0000 0000", 1000_00))
 }
