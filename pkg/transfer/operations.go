@@ -33,11 +33,11 @@ func (s *Service) Card2Card(from string, to string, amount int64) (total int64, 
 	if (fromCard != nil) && (toCard != nil) {
 		if fromCard.Balance < amount {
 			return amount, false
-		} else {
-			fromCard.Balance -= amount
-			toCard.Balance += amount
-			return amount, true
 		}
+		fromCard.Balance -= amount
+		toCard.Balance += amount
+		return amount, true
+
 	}
 
 	// I to E
@@ -46,10 +46,9 @@ func (s *Service) Card2Card(from string, to string, amount int64) (total int64, 
 		total := amount + commission
 		if fromCard.Balance < total {
 			return total, false
-		} else {
-			fromCard.Balance -= total
-			return total, true
 		}
+		fromCard.Balance -= total
+		return total, true
 
 	}
 
@@ -65,10 +64,10 @@ func (s *Service) Card2Card(from string, to string, amount int64) (total int64, 
 		if commission > s.EtoEMin {
 			total = amount + commission
 			return total, true
-		} else {
-			total = amount + s.EtoEMin
-			return total, true
 		}
+		total = amount + s.EtoEMin
+		return total, true
+
 	}
 	return 0, false
 }
