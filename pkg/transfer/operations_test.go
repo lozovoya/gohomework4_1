@@ -27,12 +27,6 @@ func TestService_Card2Card(t *testing.T) {
 	CardSvc.IssueCard("master", 100_000_00, "0000 0000 0000 0000", "rub")
 	CardSvc.IssueCard("visa", 15_000_00, "3333 3333 3333 3333", "rub")
 
-	f := fields{&CardSvc, 0,0,0,0,0,0}
-	a := args{"000", "000", 10_00}
-
-
-
-
 	tests := []struct {
 		name      string
 		fields    fields
@@ -40,29 +34,80 @@ func TestService_Card2Card(t *testing.T) {
 		wantTotal int64
 		wantOk    bool
 	}{
-		{"ItoI", f fields, a args, 776_00, true },
-		//	{"Peguin Bank", []*card.Service{
-		//		{0, "visa", 15_000_00, "0000 0000 0000 0000", "rub"},
-		//		{1, "master", 15_000_00, "1111 1111 1111 1111", "rub"},
-		//	}
-		//	}, 0, 0, 0, 0, 0, 0, 0, 0},
-		//args({"0000", "0000", 12_000}),
-		//},
+		{
+			name: "ItoI succesful",
+			args: args{
+				from:   "0000 0000 0000 0000",
+				to:     "3333 3333 3333 3333",
+				amount: 10_000_00,
+			},
+			wantTotal: 10_000_00,
+			wantOk:    true,
+		},
+		{
+			name: "ItoI failed",
+			args: args{
+				from:   "0000 0000 0000 0000",
+				to:     "3333 3333 3333 3333",
+				amount: 10_000_000_00,
+			},
+			wantTotal: 10_000_000_00,
+			wantOk:    false,
+		},
+		{
+			name: "ItoE succesful",
+			args: args{
+				from:   "0000 0000 0000 0000",
+				to:     "3333",
+				amount: 10_000_00,
+			},
+			wantTotal: 10_050_00,
+			wantOk:    true,
+		},
+		{
+			name: "ItoE failed",
+			args: args{
+				from:   "0000 0000 0000 0000",
+				to:     "3333",
+				amount: 10_000_000_00,
+			},
+			wantTotal: 10_050_000_00,
+			wantOk:    false,
+		},
+		{
+			name: "EtoI",
+			args: args{
+				from:   "0000",
+				to:     "3333 3333 3333 3333",
+				amount: 10_000_00,
+			},
+			wantTotal: 10_000_00,
+			wantOk:    true,
+		},
+		{
+			name: "EtoE",
+			args: args{
+				from:   "0000",
+				to:     "3333",
+				amount: 10_000_00,
+			},
+			wantTotal: 10_150_00,
+			wantOk:    true,
+		},
 	}
-
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			s := &Service{
-				CardSvc:       tt.fields.CardSvc,
-				ItoICommision: tt.fields.ItoICommision,
-				ItoIMin:       tt.fields.ItoIMin,
-				ItoECommision: tt.fields.ItoECommision,
-				ItoEMin:       tt.fields.ItoEMin,
-				EtoICommision: tt.fields.EtoICommision,
-				EtoIMin:       tt.fields.EtoIMin,
-				EtoECommision: tt.fields.EtoECommision,
-				EtoEMin:       tt.fields.EtoEMin,
+				CardSvc:       CardSvc,
+				ItoICommision: 0,
+				ItoIMin:       0,
+				ItoECommision: 5,
+				ItoEMin:       10_00,
+				EtoICommision: 0,
+				EtoIMin:       0,
+				EtoECommision: 15,
+				EtoEMin:       30_00,
 			}
 			gotTotal, gotOk := s.Card2Card(tt.args.from, tt.args.to, tt.args.amount)
 			if gotTotal != tt.wantTotal {
