@@ -62,7 +62,7 @@ func (s *Service) Card2Card(from string, to string, amount int64) (total int64, 
 	if (fromCard == nil) && (toCard == nil) {
 		commission := amount * s.EtoECommision / 1000
 		if commission > s.EtoEMin {
-			total = amount - commission
+			total = amount + commission
 			return total, true
 		}
 		total = amount + s.EtoEMin
